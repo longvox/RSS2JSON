@@ -4,9 +4,15 @@ import * as cheerio from 'cheerio';
 export class NewPaperModels {
 	constructor() {}
 
-	static thumbnail(data: any) {
-		let description = cheerio.load(data);
-		return description('img').attr('src'); 
+	static getMoreData(data: any) {
+		let description = cheerio.load(`<div id="data">${data}</div>`,{ decodeEntities: false });
+		// console.log(description('#data').html())
+		let decodeData = description('#data').html();
+		let $ = cheerio.load(decodeData)
+		return {
+			thumbnail: $('img').attr('src'),
+			decodeData
+		} 
 	}
 
 	static async convertRSS2JSON(url: string) {
@@ -18,7 +24,9 @@ export class NewPaperModels {
 			});
 		});
 		result.items.map(x=>{
-			x.thumbnail = this.thumbnail(x.description);
+			let data = this.getMoreData(x.description);
+			x.thumbnail = data.thumbnail;
+			x.description = data.decodeData;
 			return x;
 		})
 		return result;

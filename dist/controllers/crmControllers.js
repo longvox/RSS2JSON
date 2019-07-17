@@ -1,95 +1,31 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const crmModel_1 = require("./../models/crmModel");
-class TodosController {
-    constructor() {
-        this.TodoModel = new crmModel_1.TodoModels();
-    }
-    addNewTodo(req, res) {
-        try {
-            let todo = req.body;
-            let newTodo = this.TodoModel.addNewTodo.bind(this.TodoModel)(todo);
-            if (newTodo.id !== -1) {
-                res.status(200).send({
-                    status: 'success',
-                    todo: newTodo
-                });
-            }
-            else
-                throw 'error';
-        }
-        catch (e) {
-            res.status(400).send({
-                status: 'error'
-            });
-        }
-    }
-    getTodos(req, res) {
-        let todos = this.TodoModel.getTodos.bind(this.TodoModel)();
-        if (todos) {
-            res.status(200).send({
-                status: 'success',
-                todos
-            });
-        }
-        else {
-            res.status(400).send({
-                status: 'error',
-                message: 'Empty data'
-            });
-        }
-    }
-    getTodoWithID(req, res) {
-        let todoId = req.params.todoId;
-        let todo = this.TodoModel.getTodoWithID.bind(this.TodoModel)(todoId);
-        if (todo) {
-            res.status(200).send({
-                status: 'success',
-                todo
-            });
-        }
-        else {
-            res.status(400).send({
-                status: 'error',
-                message: 'Empty data'
-            });
-        }
-    }
-    updateTodo(req, res) {
-        try {
-            let todo = req.body;
-            let todoId = req.params.todoId;
-            let status = this.TodoModel.updateTodo.bind(this.TodoModel)(todoId, todo);
-            if (status) {
-                res.status(200).send({
-                    status: 'success'
-                });
+class NewPaperController {
+    constructor() { }
+    RSS2JSON(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let rss_url = decodeURIComponent(req.query.rss_url);
+            let json = yield crmModel_1.NewPaperModels.convertRSS2JSON(rss_url);
+            if (json) {
+                res.status(200).send(json);
             }
             else {
-                throw 'error';
+                res.status(400).send({
+                    status: "error",
+                    message: "`rss_url` parameter must be a valid url."
+                });
             }
-        }
-        catch (e) {
-            res.status(400).send({
-                status: 'error',
-                message: 'Empty data'
-            });
-        }
-    }
-    deleteTodo(req, res) {
-        let todoId = req.params.todoId;
-        let status = this.TodoModel.deleteTodo.bind(this.TodoModel)(todoId);
-        if (status) {
-            res.status(200).send({
-                status: 'success'
-            });
-        }
-        else {
-            res.status(400).send({
-                status: 'error'
-            });
-        }
+        });
     }
 }
-exports.TodosController = TodosController;
+exports.NewPaperController = NewPaperController;
 //# sourceMappingURL=crmControllers.js.map
